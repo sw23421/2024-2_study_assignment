@@ -48,10 +48,24 @@ namespace calculator
 
     // Calculator class to perform operations
     public class Calculator
-    {
-        // ---------- TODO ----------
-        
-        // --------------------
+    {    
+        public double Calculate(double num1, string op, double num2) {
+            
+            switch(op) {
+                case "+" : return num1 + num2;
+                break;
+                case "-" : return num1 - num2;
+                break;
+                case "*" : return num1 * num2;
+                break;
+                case "/" : if(num2 == 0) {
+                    throw new DivideByZeroException("Division by zero is not allowed");
+                } return num1 / num2;
+                break;
+                default : 
+                throw new InvalidOperationException("Invalid operator");
+            }
+        }
     }
 }
 
