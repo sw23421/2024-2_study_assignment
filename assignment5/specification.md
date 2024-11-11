@@ -16,6 +16,7 @@ Run Sample 1 폴더를 선택하시면 목록에 추가됩니다.
 
 <br/>
 
+scenes에서 create scene // sample scene은 사용 x
 명세를 잘 읽어보시고 Scene을 만들어주세요.
 
 Scene 이외의 것들은 수정하시면 안됩니다.
@@ -64,6 +65,7 @@ Canvas에 3가지 오브젝트를 적절한 위치에 배치해주세요.
 - "Score"라는 이름의 텍스트 (프리팹)
 - "Message"라는 이름의 텍스트 (프리팹)
 - "Button"이라는 이름의 버튼, 버튼 내부 텍스트는 "Restart"
+- 버튼 온클릭 플러스 scene의 게임 매니저, 리스타트 게임
 
 <br/>
 
