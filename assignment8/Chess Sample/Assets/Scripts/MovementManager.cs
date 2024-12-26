@@ -16,17 +16,77 @@ public class MovementManager : MonoBehaviour
         this.effectParent = effectParent;
     }
 
-    private bool TryMove(Piece piece, (int, int) targetPos, MoveInfo moveInfo)
-    {
+    private bool TryMove(Piece piece, (int, int) targetPos, MoveInfo moveInfo) {
         // moveInfo의 distance만큼 direction을 이동시키며 이동이 가능한지를 체크
         // 보드에 있는지, 다른 piece에 의해 막히는지 등을 체크
         // 폰에 대한 예외 처리를 적용
         // --- TODO ---
         
-        // ------
-    }
+        if(piece is Pawn) {
+            (int x, int y) = piece.MyPos;
 
-    // 체크를 제외한 상황에서 가능한 움직임인지를 검증
+            if (moveInfo.dirX != 0) {
+                x += moveInfo.dirX;
+                y += moveInfo.dirY;
+                
+
+                if (!Utils.IsInBoard((x, y))) {
+                    return false;
+                }
+
+                var otherPiece = gameManager.Pieces[x, y];
+                if(otherPiece != null && otherPiece.PlayerDirection != piece.PlayerDirection) {
+                    return (x, y) == targetPos;
+                }
+                return false;
+            }
+            else {
+                for (int i = 1; i <= moveInfo.distance; i++) {
+                    y += moveInfo.dirY;
+                    if (!Utils.IsInBoard((x, y))) {
+                        return false;
+                    }
+                    if (gameManager.Pieces[x, y] != null) {
+                        return false;
+                    }
+
+                    if((x, y) == targetPos) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        (int startX, int startY) = piece.MyPos;
+        for (int i = 1; i <= moveInfo.distance; i++) {
+            int x = startX + moveInfo.dirX * i;
+            int y = startY + moveInfo.dirY * i;
+
+            if (!Utils.IsInBoard((x, y))) {
+                return false;
+            }
+
+            var otherPiece = gameManager.Pieces[x, y];
+            if (otherPiece != null) {
+                if (x == targetPos.Item1 && y == targetPos.Item2) {
+                    if(otherPiece.PlayerDirection != piece.PlayerDirection) {
+                        return true;
+                    }
+                    return false;
+                }
+                else {
+                    return false;
+                }
+            }
+
+            if(x == targetPos.Item1 && y == targetPos.Item2) {
+                return true;
+            }
+        }
+        return false;
+    }
+        
     private bool IsValidMoveWithoutCheck(Piece piece, (int, int) targetPos)
     {
         if (!Utils.IsInBoard(targetPos) || targetPos == piece.MyPos) return false;
@@ -38,7 +98,7 @@ public class MovementManager : MonoBehaviour
         }
         
         return false;
-    }
+    }    
 
     // 체크를 포함한 상황에서 가능한 움직임인지를 검증
     public bool IsValidMove(Piece piece, (int, int) targetPos)
@@ -84,7 +144,18 @@ public class MovementManager : MonoBehaviour
         // 왕이 지금 체크 상태인지를 리턴
         // gameManager.Pieces에서 Piece들을 참조하여 움직임을 확인
         // --- TODO ---
-        
+        for(int x = 0; x < Utils.FieldWidth; x++) {
+            for(int y = 0; y < Utils.FieldHeight; y++) {
+                var piece = gameManager.Pieces[x, y];
+
+                if(piece != null && piece.PlayerDirection != playerDirection) {
+                    if(IsValidMoveWithoutCheck(piece, kingPos)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
         // ------
     }
 
@@ -97,7 +168,17 @@ public class MovementManager : MonoBehaviour
         // effectPrefab을 effectParent의 자식으로 생성하고 위치를 적절히 설정
         // currentEffects에 effectPrefab을 추가
         // --- TODO ---
-        
+        for (int x = 0; x < Utils.FieldWidth; x++) {
+            for (int y = 0; y < Utils.FieldHeight; y++) {
+                var targetPos = (x, y);
+                if(IsValidMove(piece, targetPos)) {
+                    GameObject effect = Instantiate(effectPrefab, effectParent);
+                    effect.transform.position = Utils.ToRealPos(targetPos);
+
+                    currentEffects.Add(effect);
+                }
+            }
+        }
         // ------
     }
 

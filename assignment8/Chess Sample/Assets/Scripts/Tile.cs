@@ -19,7 +19,12 @@ public class Tile : MonoBehaviour
         // MyPos를 targetPos로 지정함
         // 위치를 targetPos 이동시키고, 배치에 따라 색깔을 지정
         // --- TODO ---
-        
+        if(Utils.IsInBoard(MyPos)) {
+            MyPos = targetPos;
+            transform.position = Utils.ToRealPos(MyPos);
+            Debug.Log($"Placing tile of type at board position {MyPos}, real position {Utils.ToRealPos(MyPos)}");
+            MySpriteRenderer.color = tileColor;
+        }
         // ------
     }
 }

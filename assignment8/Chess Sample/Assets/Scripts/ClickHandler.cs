@@ -37,6 +37,7 @@ public class ClickHandler : MonoBehaviour
         if (clickedPiece != null && clickedPiece.PlayerDirection == gameManager.CurrentTurn)
         {
             selectedPiece = clickedPiece;
+            Debug.LogError($"Piece selected : {selectedPiece}");
             isDragging = true;
             dragOffset = selectedPiece.transform.position - mousePosition;
             dragOffset.z = 0;
@@ -69,6 +70,17 @@ public class ClickHandler : MonoBehaviour
             // effect를 초기화
             // --- TODO ---
             
+            if(isDragging) {
+                 if(Utils.IsInBoard(boardPos) && gameManager.IsValidMove(selectedPiece, boardPos)) {
+                gameManager.Move(selectedPiece, boardPos);
+            }
+            else {
+                selectedPiece.transform.position = originalPosition;
+            }
+            }
+
+            gameManager.ClearEffects();
+
             // ------
             isDragging = false;
             selectedPiece = null;
